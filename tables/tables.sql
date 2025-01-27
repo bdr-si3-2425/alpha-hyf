@@ -1,36 +1,35 @@
-CREATE TABLE if not exists MyUser (
+CREATE TABLE IF NOT EXISTS MyUser (
     IdUser INTEGER PRIMARY KEY,
-    Name VARCHAR(50),
-    Surname VARCHAR(50),
-    BirthDate DATE,
-    NumFollowers INTEGER,
-    NumFollowings INTEGER,
-    NumFriends INTEGER
+    Name VARCHAR(50) NOT NULL,
+    Surname VARCHAR(50) NOT NULL,
+    BirthDate DATE NOT NULL
 );
 
-CREATE TABLE if not exists MyGroup (
+CREATE TABLE IF NOT EXISTS MyGroup (
     IdGroup INTEGER PRIMARY KEY,
-    Intrest VARCHAR(50),
-    NameGrp VARCHAR(50)
+    Interest VARCHAR(50) NOT NULL, 
+    NameGrp VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE if not exists Friends (
+CREATE TABLE IF NOT EXISTS Friends (
     IdUser1 INTEGER,
     IdUser2 INTEGER,
     PRIMARY KEY (IdUser1, IdUser2),
     FOREIGN KEY (IdUser1) REFERENCES MyUser(IdUser) ON DELETE CASCADE,
-    FOREIGN KEY (IdUser2) REFERENCES MyUser(IdUser) ON DELETE CASCADE
+    FOREIGN KEY (IdUser2) REFERENCES MyUser(IdUser) ON DELETE CASCADE,
+    CHECK (IdUser1 < IdUser2) 
 );
 
-CREATE TABLE if not exists Follows (
+CREATE TABLE IF NOT EXISTS Follows (
     IdUserFollower INTEGER,
     IdUserFollowed INTEGER,
     PRIMARY KEY (IdUserFollower, IdUserFollowed),
     FOREIGN KEY (IdUserFollower) REFERENCES MyUser(IdUser) ON DELETE CASCADE,
-    FOREIGN KEY (IdUserFollowed) REFERENCES MyUser(IdUser) ON DELETE CASCADE
+    FOREIGN KEY (IdUserFollowed) REFERENCES MyUser(IdUser) ON DELETE CASCADE,
+    CHECK (IdUserFollower <> IdUserFollowed) 
 );
 
-CREATE TABLE if not exists Joins (
+CREATE TABLE IF NOT EXISTS Joins (
     IdGroup INTEGER,
     IdUser INTEGER,
     PRIMARY KEY (IdGroup, IdUser),
@@ -38,18 +37,18 @@ CREATE TABLE if not exists Joins (
     FOREIGN KEY (IdUser) REFERENCES MyUser(IdUser) ON DELETE CASCADE
 );
 
-CREATE TABLE if not exists Post  (
+CREATE TABLE IF NOT EXISTS Post (
     IdPost INTEGER PRIMARY KEY,
-    Content VARCHAR(255),
-    Date DATE,
-    Visibility VARCHAR(20),
-    IdUser INTEGER,
+    Content VARCHAR(255) NOT NULL,
+    Date DATE NOT NULL,
+    Visibility ENUM('public', 'private') NOT NULL,
+    IdUser INTEGER NOT NULL,  -- Posts must have an author
     IdGroup INTEGER,
     FOREIGN KEY (IdUser) REFERENCES MyUser(IdUser) ON DELETE CASCADE,
     FOREIGN KEY (IdGroup) REFERENCES MyGroup(IdGroup) ON DELETE CASCADE
 );
 
-CREATE TABLE if not exists Likes  (
+CREATE TABLE IF NOT EXISTS Likes (
     IdPost INTEGER,
     IdUser INTEGER,
     PRIMARY KEY (IdPost, IdUser),
@@ -57,7 +56,7 @@ CREATE TABLE if not exists Likes  (
     FOREIGN KEY (IdUser) REFERENCES MyUser(IdUser) ON DELETE CASCADE
 );
 
-CREATE TABLE if not exists MyViews  (
+CREATE TABLE IF NOT EXISTS MyViews (
     IdPost INTEGER,
     IdUser INTEGER,
     PRIMARY KEY (IdPost, IdUser),
@@ -65,7 +64,7 @@ CREATE TABLE if not exists MyViews  (
     FOREIGN KEY (IdUser) REFERENCES MyUser(IdUser) ON DELETE CASCADE
 );
 
-CREATE TABLE if not exists Shares  (
+CREATE TABLE IF NOT EXISTS Shares (
     IdPost INTEGER,
     IdUser INTEGER,
     PRIMARY KEY (IdPost, IdUser),
@@ -73,12 +72,11 @@ CREATE TABLE if not exists Shares  (
     FOREIGN KEY (IdUser) REFERENCES MyUser(IdUser) ON DELETE CASCADE
 );
 
-CREATE TABLE if not exists MyComments  (
-    IdPost INTEGER,
-    IdUser INTEGER,
-    Content VARCHAR(255),
-    PRIMARY KEY (IdPost, IdUser),
+CREATE TABLE IF NOT EXISTS MyComments (
+    IdComment INTEGER PRIMARY KEY,
+    IdPost INTEGER NOT NULL,
+    IdUser INTEGER NOT NULL,
+    Content VARCHAR(255) NOT NULL,
     FOREIGN KEY (IdPost) REFERENCES Post(IdPost) ON DELETE CASCADE,
     FOREIGN KEY (IdUser) REFERENCES MyUser(IdUser) ON DELETE CASCADE
 );
-
