@@ -37,11 +37,22 @@ CREATE TABLE IF NOT EXISTS Joins (
     FOREIGN KEY (IdUser) REFERENCES MyUser(IdUser) ON DELETE CASCADE
 );
 
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM pg_type
+        WHERE typname = 'visibility_enum'
+    ) THEN
+        CREATE TYPE visibility_enum AS ENUM ('public', 'private');
+    END IF;
+END $$;
+
 CREATE TABLE IF NOT EXISTS Post (
     IdPost INTEGER PRIMARY KEY,
     Content VARCHAR(255) NOT NULL,
     Date DATE NOT NULL,
-    Visibility ENUM('public', 'private') NOT NULL,
+    Visibility visibility_enum NOT NULL,  -- Use the ENUM type here
     IdUser INTEGER NOT NULL, 
     IdGroup INTEGER,
     FOREIGN KEY (IdUser) REFERENCES MyUser(IdUser) ON DELETE CASCADE,

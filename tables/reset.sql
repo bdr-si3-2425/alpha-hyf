@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS MyUser, MyGroup, Friends, Follows, Joins, Post, MyViews, Likes, Shares, MyComments CASCADE;
