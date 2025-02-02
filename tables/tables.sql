@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS Post (
     IdPost INTEGER PRIMARY KEY,
     Content VARCHAR(255) NOT NULL,
     Date DATE NOT NULL,
-    Visibility visibility_enum NOT NULL,  -- Use the ENUM type here
+    Visibility visibility_enum NOT NULL,  
     IdUser INTEGER NOT NULL, 
     IdGroup INTEGER,
     FOREIGN KEY (IdUser) REFERENCES MyUser(IdUser) ON DELETE CASCADE,
